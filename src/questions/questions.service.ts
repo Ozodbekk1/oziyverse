@@ -12,11 +12,13 @@ import { Question, QuestionDocument } from "./schemas/question.schema";
 import * as shortid from "shortid";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import { UpdateQuestionDto } from "./dto/update-question.dto";
+import { NotificationsService } from "../notifications/notifications.service"; // <-- Add this
 
 @Injectable()
 export class QuestionsService {
   constructor(
-    @InjectModel(Question.name) private questionModel: Model<QuestionDocument>
+    @InjectModel(Question.name) private questionModel: Model<QuestionDocument>,
+    private notificationsService: NotificationsService // <-- Add this
   ) {}
 
   async create(dto: CreateQuestionDto, authorId: string) {
@@ -42,7 +44,6 @@ export class QuestionsService {
   }
 
   async update(slug: string, patch: UpdateQuestionDto, userId: string) {
-    // Use Document type so .save() is available and TS knows about authorId
     const q = (await this.questionModel.findOne({ slug })) as QuestionDocument;
     if (!q) throw new NotFoundException("Question not found");
     if (q.authorId !== userId)
@@ -81,6 +82,17 @@ export class QuestionsService {
     if (!question.comments) question.comments = [];
     question.comments.push(comment);
     await question.save();
+
+    // --- Notification logic: notify question author, but not if they comment themselves
+    if (question.authorId !== authorId) {
+      await this.notificationsService.createForUser(
+        question.authorId,
+        "comment",
+        `Someone commented on your question "${question.title}": "${comment.content}"`,
+        question.slug
+      );
+    }
+
     return comment;
   }
 

@@ -8,10 +8,10 @@ export type NotificationDocument = Notification & Document;
 @Schema({ timestamps: true })
 export class Notification extends Document {
   @Prop({ required: true })
-  userId: string; // Who receives this notification
+  userId: string; // The recipient
 
   @Prop({ required: true })
-  type: string; // 'answer', 'comment', 'accept', 'vote', etc.
+  type: string; // 'answer', 'comment', etc
 
   @Prop({ required: true })
   message: string;
@@ -20,7 +20,7 @@ export class Notification extends Document {
   read: boolean;
 
   @Prop()
-  refId: string; // Slug or ID of the related question/answer/etc.
+  refId?: string; // Reference to related object (question/answer)
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
