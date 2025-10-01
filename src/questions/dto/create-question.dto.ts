@@ -1,15 +1,28 @@
-import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
+/** @format */
+
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  IsArray,
+  ArrayMaxSize,
+} from "class-validator";
 
 export class CreateQuestionDto {
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty({ message: "Title is required" })
+  @MaxLength(200)
   title: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty({ message: "Content is required" })
+  @MaxLength(5000)
   content: string;
 
   @IsArray()
   @IsOptional()
+  @ArrayMaxSize(5)
+  @IsString({ each: true })
   tags?: string[];
 }

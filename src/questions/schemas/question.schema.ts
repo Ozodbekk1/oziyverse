@@ -1,4 +1,5 @@
 /** @format */
+
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
@@ -31,6 +32,9 @@ export class Question extends Document {
     authorId: string;
     createdAt: Date;
   }[];
+
+  @Prop({ required: true })
+  authorId: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;

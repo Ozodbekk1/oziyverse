@@ -1,4 +1,6 @@
-import { IsOptional, IsString, IsArray } from 'class-validator';
+/** @format */
+
+import { IsOptional, IsString, IsArray } from "class-validator";
 
 export class UpdateQuestionDto {
   @IsOptional()
